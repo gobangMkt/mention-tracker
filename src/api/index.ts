@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { WeeklyResult } from '../types';
 
-const BASE = '/api';
+const BASE = import.meta.env.VITE_API_URL ?? 'https://mention-tracker-production.up.railway.app/api';
 
 export const fetchResults = (): Promise<WeeklyResult[]> =>
   axios.get(`${BASE}/results`).then((r) => r.data);

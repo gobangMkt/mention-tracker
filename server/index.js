@@ -59,5 +59,12 @@ cron.schedule('0 9 * * 1', async () => {
   console.log('주간 자동 수집 완료:', new Date().toISOString());
 });
 
+// 프론트엔드 정적 파일 서빙 (프로덕션)
+const distPath = path.join(__dirname, '../dist');
+app.use(express.static(distPath));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`서버 실행 중: http://localhost:${PORT}`));
