@@ -62,7 +62,7 @@ cron.schedule('0 9 * * 1', async () => {
 // 프론트엔드 정적 파일 서빙 (프로덕션)
 const distPath = path.join(__dirname, '../dist');
 app.use(express.static(distPath));
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
