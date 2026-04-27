@@ -101,7 +101,7 @@ export default function MentionList({ result, keyword }: Props) {
               <Pie data={pieData} cx={85} cy={85} innerRadius={50} outerRadius={80} dataKey="value" paddingAngle={2}>
                 {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
               </Pie>
-              <Tooltip formatter={(v: number) => `${v.toLocaleString()}건`} />
+              <Tooltip formatter={(v) => `${Number(v).toLocaleString()}건`} />
             </PieChart>
           </ResponsiveContainer>
           <div className="pie-legend">
