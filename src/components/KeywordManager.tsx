@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Plus, X, Search, Loader2 } from 'lucide-react';
-import { PERIOD_OPTIONS } from '../types';
+import { VIEW_PERIOD_OPTIONS } from '../types';
 
 interface Props {
   keywords: string[];
-  days: number;
+  viewWeeks: number;
   onSave: (keywords: string[]) => void;
-  onDaysChange: (days: number) => void;
-  onCollect: (keywords: string[], days: number) => Promise<void>;
+  onViewWeeksChange: (weeks: number) => void;
+  onCollect: (keywords: string[]) => Promise<void>;
   collecting: boolean;
 }
 
-export default function KeywordManager({ keywords, days, onSave, onDaysChange, onCollect, collecting }: Props) {
+export default function KeywordManager({ keywords, viewWeeks, onSave, onViewWeeksChange, onCollect, collecting }: Props) {
   const [input, setInput] = useState('');
 
   const add = () => {
@@ -44,13 +44,13 @@ export default function KeywordManager({ keywords, days, onSave, onDaysChange, o
       </div>
 
       <div className="period-selector">
-        <span className="period-label">기간</span>
+        <span className="period-label">조회 범위</span>
         <div className="period-btns">
-          {PERIOD_OPTIONS.map((opt) => (
+          {VIEW_PERIOD_OPTIONS.map((opt) => (
             <button
               key={opt.label}
-              className={`period-btn ${days === opt.days ? 'active' : ''}`}
-              onClick={() => onDaysChange(opt.days)}
+              className={`period-btn ${viewWeeks === opt.weeks ? 'active' : ''}`}
+              onClick={() => onViewWeeksChange(opt.weeks)}
             >
               {opt.label}
             </button>
@@ -60,7 +60,7 @@ export default function KeywordManager({ keywords, days, onSave, onDaysChange, o
 
       <button
         className="btn-collect"
-        onClick={() => onCollect(keywords, days)}
+        onClick={() => onCollect(keywords)}
         disabled={collecting || keywords.length === 0}
       >
         {collecting ? <Loader2 size={16} className="spin" /> : <Search size={16} />}

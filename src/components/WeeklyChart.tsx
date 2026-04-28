@@ -6,6 +6,7 @@ import type { WeeklyResult } from '../types';
 interface Props {
   results: WeeklyResult[];
   keyword: string;
+  viewWeeks: number;
 }
 
 const PLATFORMS = [
@@ -15,14 +16,16 @@ const PLATFORMS = [
   { name: '구글', color: '#4285F4' },
 ];
 
-export default function WeeklyChart({ results, keyword }: Props) {
-  const chartData = results.map((r) => {
+export default function WeeklyChart({ results, keyword, viewWeeks }: Props) {
+  const periodResults = viewWeeks === 0 ? results : results.slice(-viewWeeks);
+
+  const chartData = periodResults.map((r) => {
     const kd = r.data.find((d) => d.keyword === keyword);
     return {
       week: r.week,
-      '네이버 블로그': kd?.naver.blog.periodCount ?? kd?.naver.blog.total ?? 0,
-      '네이버 뉴스': kd?.naver.news.periodCount ?? kd?.naver.news.total ?? 0,
-      '네이버 카페': kd?.naver.cafe.periodCount ?? kd?.naver.cafe.total ?? 0,
+      '네이버 블로그': kd?.naver.blog.total ?? 0,
+      '네이버 뉴스': kd?.naver.news.total ?? 0,
+      '네이버 카페': kd?.naver.cafe.total ?? 0,
       구글: kd?.google.total ?? 0,
     };
   });

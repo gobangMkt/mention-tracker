@@ -12,5 +12,5 @@ export const fetchKeywords = (): Promise<string[]> =>
 export const saveKeywords = (keywords: string[]): Promise<void> =>
   axios.post(`${BASE}/keywords`, { keywords }).then(() => undefined);
 
-export const collectNow = (keywords: string[], days: number): Promise<{ success: boolean }> =>
-  axios.post(`${BASE}/collect`, { keywords, days: days || null }).then((r) => r.data);
+export const collectNow = (keywords: string[]): Promise<{ success: boolean; week: string }> =>
+  axios.post(`${BASE}/collect`, { keywords }).then((r) => r.data);

@@ -8,7 +8,6 @@ export interface MentionItem {
 
 export interface NaverTypeResult {
   total: number;
-  periodCount: number;
   items: MentionItem[];
 }
 
@@ -16,7 +15,6 @@ export interface NaverResult {
   blog: NaverTypeResult;
   news: NaverTypeResult;
   cafe: NaverTypeResult;
-  web: NaverTypeResult;
 }
 
 export interface GoogleResult {
@@ -33,13 +31,13 @@ export interface KeywordData {
 export interface WeeklyResult {
   week: string;
   collectedAt: string;
-  days: number | null;
   data: KeywordData[];
 }
 
-export const PERIOD_OPTIONS = [
-  { label: '7일', days: 7 },
-  { label: '30일', days: 30 },
-  { label: '90일', days: 90 },
-  { label: '전체', days: 0 },
+// 조회 범위 (몇 주치 데이터를 볼 것인가)
+export const VIEW_PERIOD_OPTIONS = [
+  { label: '1주', weeks: 1 },
+  { label: '4주', weeks: 4 },
+  { label: '12주', weeks: 12 },
+  { label: '전체', weeks: 0 },
 ] as const;

@@ -6,57 +6,76 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
 import { searchNaver } from './api/naver.js';
 import { searchGoogle } from './api/google.js';
-import { saveWeeklyResult, loadAllResults, loadKeywords, saveKeywords } from './data/store.js';
-
-dotenv.config({ path: path.join(__dirname, '../.env') });
+import { saveWeeklyResult, loadAllResults, loadKeywords, saveKeywords, cleanupOldWeeks } from './data/store.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const collectKeywords = async (keywords, days) => {
+const collectKeywords = async (keywords) => {
   const results = [];
   for (const keyword of keywords) {
-    const naver = await searchNaver(keyword, days);
-    const google = await searchGoogle(keyword, days);
+    const naver = await searchNaver(keyword);
+    const google = await searchGoogle(keyword);
     results.push({ keyword, naver, google });
   }
-  saveWeeklyResult(results, days);
-  return results;
+  const week = await saveWeeklyResult(results);
+  return { week, results };
 };
 
-app.get('/api/results', (req, res) => {
-  res.json(loadAllResults());
-});
-
-app.post('/api/collect', async (req, res) => {
-  const { keywords, days } = req.body;
-  if (!keywords?.length) return res.status(400).json({ error: '키워드 없음' });
+app.get('/api/results', async (req, res) => {
   try {
-    const results = await collectKeywords(keywords, days);
-    res.json({ success: true, results });
+    res.json(await loadAllResults());
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-app.get('/api/keywords', (req, res) => {
-  res.json(loadKeywords());
+app.post('/api/collect', async (req, res) => {
+  const { keywords } = req.body;
+  if (!keywords?.length) return res.status(400).json({ error: '키워드 없음' });
+  try {
+    const { week, results } = await collectKeywords(keywords);
+    await cleanupOldWeeks();
+    res.json({ success: true, week, results });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
-app.post('/api/keywords', (req, res) => {
-  const { keywords } = req.body;
-  saveKeywords(keywords);
-  res.json({ success: true });
+app.get('/api/keywords', async (req, res) => {
+  try {
+    res.json(await loadKeywords());
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post('/api/keywords', async (req, res) => {
+  try {
+    await saveKeywords(req.body.keywords);
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // 매주 월요일 오전 9시 자동 수집
 cron.schedule('0 9 * * 1', async () => {
-  const keywords = loadKeywords();
-  if (keywords.length) await collectKeywords(keywords);
-  console.log('주간 자동 수집 완료:', new Date().toISOString());
+  try {
+    const keywords = await loadKeywords();
+    if (keywords.length) {
+      await collectKeywords(keywords);
+      await cleanupOldWeeks();
+    }
+    console.log('주간 자동 수집 완료:', new Date().toISOString());
+  } catch (e) {
+    console.error('자동 수집 실패:', e.message);
+  }
 });
 
 // 프론트엔드 정적 파일 서빙 (프로덕션)

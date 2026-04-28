@@ -14,7 +14,7 @@ export default function App() {
   const [collecting, setCollecting] = useState(false);
   const [lastCollected, setLastCollected] = useState<string>('');
   const [error, setError] = useState<string>('');
-  const [days, setDays] = useState<number>(30);
+  const [viewWeeks, setViewWeeks] = useState<number>(4);
 
   useEffect(() => {
     fetchKeywords().then(setKeywords).catch(() => {});
@@ -34,11 +34,11 @@ export default function App() {
     if (kws.length && !kws.includes(selectedKeyword)) setSelectedKeyword(kws[0]);
   };
 
-  const handleCollect = async (kws: string[], d: number) => {
+  const handleCollect = async (kws: string[]) => {
     setCollecting(true);
     setError('');
     try {
-      await collectNow(kws, d);
+      await collectNow(kws);
       const data = await fetchResults();
       setResults(data);
       if (data.length) setLastCollected(data[data.length - 1].collectedAt);
@@ -69,9 +69,9 @@ export default function App() {
         <aside className="sidebar">
           <KeywordManager
             keywords={keywords}
-            days={days}
+            viewWeeks={viewWeeks}
             onSave={handleSaveKeywords}
-            onDaysChange={setDays}
+            onViewWeeksChange={setViewWeeks}
             onCollect={handleCollect}
             collecting={collecting}
           />
@@ -107,9 +107,9 @@ export default function App() {
           )}
           {selectedKeyword ? (
             <>
-              <SummaryCards result={latestResult} keyword={selectedKeyword} />
+              <SummaryCards results={results} keyword={selectedKeyword} viewWeeks={viewWeeks} />
               {results.length > 0 && (
-                <WeeklyChart results={results} keyword={selectedKeyword} />
+                <WeeklyChart results={results} keyword={selectedKeyword} viewWeeks={viewWeeks} />
               )}
               <MentionList result={latestResult} keyword={selectedKeyword} />
             </>

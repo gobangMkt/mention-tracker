@@ -1,28 +1,16 @@
 import axios from 'axios';
 
-const daysToPeriod = (days) => {
-  if (!days) return 'any time';
-  if (days <= 7) return 'd7';
-  if (days <= 30) return 'm1';
-  if (days <= 90) return 'm3';
-  return 'any time';
-};
-
-export const searchGoogle = async (keyword, days) => {
+export const searchGoogle = async (keyword) => {
   const apiKey = process.env.SERPER_API_KEY;
-  const tbs = days ? daysToPeriod(days) : null;
-
   try {
-    const body = { q: `"${keyword}"`, gl: 'kr', hl: 'ko', num: 10 };
-    if (tbs && tbs !== 'any time') body.tbs = `qdr:${tbs.replace('d','d').replace('m','m')}`;
-
-    const res = await axios.post('https://google.serper.dev/search', body, {
+    const res = await axios.post('https://google.serper.dev/search', {
+      q: `"${keyword}"`, gl: 'kr', hl: 'ko', num: 10,
+    }, {
       headers: {
         'X-API-KEY': apiKey,
         'Content-Type': 'application/json',
       },
     });
-
     const organic = res.data.organic || [];
     return {
       total: res.data.searchInformation?.totalResults
