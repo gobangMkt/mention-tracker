@@ -113,13 +113,12 @@ export default function MentionList({ result, keyword }: Props) {
   const kd = result.data.find((d) => d.keyword === keyword);
   if (!kd) return <p className="empty">해당 키워드 데이터 없음</p>;
 
-  const days = result.days;
-  const periodLabel = days ? `최근 ${days}일` : '전체';
+  const periodLabel = new Date(result.collectedAt).toLocaleDateString('ko-KR');
 
   const counts = {
-    blog: kd.naver.blog.periodCount ?? kd.naver.blog.total ?? 0,
-    news: kd.naver.news.periodCount ?? kd.naver.news.total ?? 0,
-    cafe: kd.naver.cafe.periodCount ?? kd.naver.cafe.total ?? 0,
+    blog: kd.naver.blog.total ?? 0,
+    news: kd.naver.news.total ?? 0,
+    cafe: kd.naver.cafe.total ?? 0,
     google: kd.google.total ?? 0,
   };
   const grandTotal = Object.values(counts).reduce((a, b) => a + b, 0);
