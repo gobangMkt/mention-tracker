@@ -59,7 +59,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  overflow: hidden;
+  overflow-x: clip;
 }
 
 .content {
