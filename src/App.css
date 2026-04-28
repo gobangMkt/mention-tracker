@@ -14,6 +14,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -59,7 +60,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  overflow-x: clip;
 }
 
 .content {
@@ -723,7 +723,7 @@ body {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .app-main {
     flex-direction: column;
   }
@@ -732,12 +732,22 @@ body {
     min-width: unset;
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
-    overflow: visible;
   }
   .summary-cards {
     grid-template-columns: repeat(2, 1fr);
   }
   .platform-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 }
