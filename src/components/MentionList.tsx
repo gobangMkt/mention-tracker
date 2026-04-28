@@ -15,6 +15,41 @@ const PLATFORMS = [
 ] as const;
 
 const INITIAL_COUNT = 5;
+const LOAD_MORE_COUNT = 10;
+
+function ItemList({ items }: { items: MentionItem[] }) {
+  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
+  const visible = items.slice(0, visibleCount);
+  const remaining = items.length - visibleCount;
+  const isExpanded = visibleCount > INITIAL_COUNT;
+
+  return (
+    <>
+      <ul className="platform-items">
+        {visible.map((item, i) => (
+          <li key={i}>
+            <a href={item.link} target="_blank" rel="noreferrer">{item.title}</a>
+            {(item.date || item.snippet) && (
+              <span className="item-meta">{item.date || item.snippet?.slice(0, 60)}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div className="btn-more-wrap">
+        {remaining > 0 && (
+          <button className="btn-more" onClick={() => setVisibleCount((c) => c + LOAD_MORE_COUNT)}>
+            더보기 +{Math.min(remaining, LOAD_MORE_COUNT)}건 ▼
+          </button>
+        )}
+        {isExpanded && remaining === 0 && (
+          <button className="btn-more" onClick={() => setVisibleCount(INITIAL_COUNT)}>
+            접기 ▲
+          </button>
+        )}
+      </div>
+    </>
+  );
+}
 
 function PlatformCard({
   label, color, count, total, items,
@@ -25,9 +60,11 @@ function PlatformCard({
   total: number;
   items: MentionItem[];
 }) {
-  const [expanded, setExpanded] = useState(false);
   const pct = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
-  const visible = expanded ? items : items.slice(0, INITIAL_COUNT);
+
+  const hasTitleMatchInfo = items.some((item) => item.titleMatch !== undefined);
+  const titleItems = hasTitleMatchInfo ? items.filter((item) => item.titleMatch) : [];
+  const bodyItems = hasTitleMatchInfo ? items.filter((item) => !item.titleMatch) : items;
 
   return (
     <div className="platform-card">
@@ -42,24 +79,27 @@ function PlatformCard({
       </div>
       {items.length === 0 ? (
         <p className="empty-small">해당 기간 결과 없음</p>
-      ) : (
+      ) : hasTitleMatchInfo ? (
         <>
-          <ul className="platform-items">
-            {visible.map((item, i) => (
-              <li key={i}>
-                <a href={item.link} target="_blank" rel="noreferrer">{item.title}</a>
-                {(item.date || item.snippet) && (
-                  <span className="item-meta">{item.date || item.snippet?.slice(0, 60)}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-          {items.length > INITIAL_COUNT && (
-            <button className="btn-more" onClick={() => setExpanded(!expanded)}>
-              {expanded ? '접기 ▲' : `더보기 +${items.length - INITIAL_COUNT}건 ▼`}
-            </button>
+          {titleItems.length > 0 && (
+            <div className="mention-section">
+              <div className="mention-section-label mention-section-title">
+                📌 제목에 포함 <span className="mention-section-count">{titleItems.length}건</span>
+              </div>
+              <ItemList items={titleItems} />
+            </div>
+          )}
+          {bodyItems.length > 0 && (
+            <div className="mention-section">
+              <div className="mention-section-label mention-section-body">
+                📝 본문에 포함 <span className="mention-section-count">{bodyItems.length}건</span>
+              </div>
+              <ItemList items={bodyItems} />
+            </div>
           )}
         </>
+      ) : (
+        <ItemList items={bodyItems} />
       )}
     </div>
   );

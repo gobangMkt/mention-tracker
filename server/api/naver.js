@@ -35,6 +35,7 @@ const searchType = async (type, keyword, days) => {
       title: item.title.replace(/<[^>]+>/g, ''),
       link: item.link || item.originallink,
       date: item.postdate || item.pubDate,
+      titleMatch: /<b>/i.test(item.title),
     }));
     const filtered = filterByDays(allItems, days);
     return { total: res.data.total, periodCount: filtered.length, items: filtered };

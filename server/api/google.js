@@ -33,6 +33,7 @@ export const searchGoogle = async (keyword, days) => {
         link: item.link,
         snippet: item.snippet,
         date: item.date,
+        titleMatch: item.title.toLowerCase().includes(keyword.toLowerCase()),
       })),
     };
   } catch (e) {

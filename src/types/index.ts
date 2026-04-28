@@ -3,6 +3,7 @@ export interface MentionItem {
   link: string;
   date?: string;
   snippet?: string;
+  titleMatch?: boolean;
 }
 
 export interface NaverTypeResult {
