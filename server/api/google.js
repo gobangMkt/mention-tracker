@@ -16,6 +16,7 @@ export const searchGoogle = async (keyword) => {
       total: res.data.searchInformation?.totalResults
         ? parseInt(res.data.searchInformation.totalResults)
         : organic.length,
+      periodCount: organic.length,
       items: organic.map((item) => ({
         title: item.title,
         link: item.link,

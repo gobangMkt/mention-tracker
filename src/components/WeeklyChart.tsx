@@ -23,10 +23,10 @@ export default function WeeklyChart({ results, keyword, viewWeeks }: Props) {
     const kd = r.data.find((d) => d.keyword === keyword);
     return {
       week: r.week,
-      '네이버 블로그': kd?.naver.blog.total ?? 0,
-      '네이버 뉴스': kd?.naver.news.total ?? 0,
-      '네이버 카페': kd?.naver.cafe.total ?? 0,
-      구글: kd?.google.total ?? 0,
+      '네이버 블로그': kd?.naver.blog.periodCount ?? 0,
+      '네이버 뉴스': kd?.naver.news.periodCount ?? 0,
+      '네이버 카페': kd?.naver.cafe.periodCount ?? 0,
+      구글: kd?.google.periodCount ?? 0,
     };
   });
 

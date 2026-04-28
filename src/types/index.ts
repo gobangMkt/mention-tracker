@@ -8,6 +8,7 @@ export interface MentionItem {
 
 export interface NaverTypeResult {
   total: number;
+  periodCount: number;
   items: MentionItem[];
 }
 
@@ -19,6 +20,7 @@ export interface NaverResult {
 
 export interface GoogleResult {
   total: number;
+  periodCount: number;
   items: MentionItem[];
 }
 

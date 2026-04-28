@@ -116,10 +116,10 @@ export default function MentionList({ result, keyword }: Props) {
   const periodLabel = new Date(result.collectedAt).toLocaleDateString('ko-KR');
 
   const counts = {
-    blog: kd.naver.blog.total ?? 0,
-    news: kd.naver.news.total ?? 0,
-    cafe: kd.naver.cafe.total ?? 0,
-    google: kd.google.total ?? 0,
+    blog: kd.naver.blog.periodCount ?? kd.naver.blog.items.length,
+    news: kd.naver.news.periodCount ?? kd.naver.news.items.length,
+    cafe: kd.naver.cafe.periodCount ?? kd.naver.cafe.items.length,
+    google: kd.google.periodCount ?? kd.google.items.length,
   };
   const grandTotal = Object.values(counts).reduce((a, b) => a + b, 0);
 

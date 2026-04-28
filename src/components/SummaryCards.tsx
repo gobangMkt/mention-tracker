@@ -17,10 +17,10 @@ export default function SummaryCards({ results, keyword, viewWeeks }: Props) {
     }, 0);
 
   const cards = [
-    { label: '네이버 블로그', value: sum((r) => r.data.find((d) => d.keyword === keyword)?.naver.blog.total ?? 0), color: '#03C75A' },
-    { label: '네이버 뉴스',   value: sum((r) => r.data.find((d) => d.keyword === keyword)?.naver.news.total ?? 0),  color: '#007A3D' },
-    { label: '네이버 카페',   value: sum((r) => r.data.find((d) => d.keyword === keyword)?.naver.cafe.total ?? 0),  color: '#89D44A' },
-    { label: '구글',          value: sum((r) => r.data.find((d) => d.keyword === keyword)?.google.total ?? 0),      color: '#4285F4' },
+    { label: '네이버 블로그', value: sum((r) => r.data.find((d) => d.keyword === keyword)?.naver.blog.periodCount ?? 0), color: '#03C75A' },
+    { label: '네이버 뉴스',   value: sum((r) => r.data.find((d) => d.keyword === keyword)?.naver.news.periodCount ?? 0),  color: '#007A3D' },
+    { label: '네이버 카페',   value: sum((r) => r.data.find((d) => d.keyword === keyword)?.naver.cafe.periodCount ?? 0),  color: '#89D44A' },
+    { label: '구글',          value: sum((r) => r.data.find((d) => d.keyword === keyword)?.google.periodCount ?? 0),      color: '#4285F4' },
   ];
 
   return (
