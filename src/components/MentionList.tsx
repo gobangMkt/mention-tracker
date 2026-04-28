@@ -23,6 +23,8 @@ function ItemList({ items }: { items: MentionItem[] }) {
   const remaining = items.length - visibleCount;
   const isExpanded = visibleCount > INITIAL_COUNT;
 
+  if (items.length === 0) return <p className="empty-small">해당 항목 없음</p>;
+
   return (
     <>
       <ul className="platform-items">
@@ -60,11 +62,12 @@ function PlatformCard({
   total: number;
   items: MentionItem[];
 }) {
+  const [tab, setTab] = useState<'title' | 'all'>('title');
   const pct = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
 
   const hasTitleMatchInfo = items.some((item) => item.titleMatch !== undefined);
-  const titleItems = hasTitleMatchInfo ? items.filter((item) => item.titleMatch) : [];
-  const bodyItems = hasTitleMatchInfo ? items.filter((item) => !item.titleMatch) : items;
+  const titleItems = items.filter((item) => item.titleMatch);
+  const visibleItems = (hasTitleMatchInfo && tab === 'title') ? titleItems : items;
 
   return (
     <div className="platform-card">
@@ -79,27 +82,26 @@ function PlatformCard({
       </div>
       {items.length === 0 ? (
         <p className="empty-small">해당 기간 결과 없음</p>
-      ) : hasTitleMatchInfo ? (
-        <>
-          {titleItems.length > 0 && (
-            <div className="mention-section">
-              <div className="mention-section-label mention-section-title">
-                📌 제목에 포함 <span className="mention-section-count">{titleItems.length}건</span>
-              </div>
-              <ItemList items={titleItems} />
-            </div>
-          )}
-          {bodyItems.length > 0 && (
-            <div className="mention-section">
-              <div className="mention-section-label mention-section-body">
-                📝 본문에 포함 <span className="mention-section-count">{bodyItems.length}건</span>
-              </div>
-              <ItemList items={bodyItems} />
-            </div>
-          )}
-        </>
       ) : (
-        <ItemList items={bodyItems} />
+        <>
+          {hasTitleMatchInfo && (
+            <div className="item-tabs">
+              <button
+                className={`item-tab ${tab === 'title' ? 'active' : ''}`}
+                onClick={() => setTab('title')}
+              >
+                제목 노출 <span className="item-tab-count">{titleItems.length}</span>
+              </button>
+              <button
+                className={`item-tab ${tab === 'all' ? 'active' : ''}`}
+                onClick={() => setTab('all')}
+              >
+                본문 포함 <span className="item-tab-count">{items.length}</span>
+              </button>
+            </div>
+          )}
+          <ItemList key={tab} items={visibleItems} />
+        </>
       )}
     </div>
   );
