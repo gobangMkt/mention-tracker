@@ -1,7 +1,7 @@
 import { db } from '../lib/firebase.js';
 import {
   doc, getDoc, setDoc, getDocs, collection, updateDoc,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 
 const getWeekLabel = () => {
   const now = new Date();
