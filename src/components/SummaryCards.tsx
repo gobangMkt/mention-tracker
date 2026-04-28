@@ -9,6 +9,8 @@ interface Props {
 export default function SummaryCards({ results, keyword, viewWeeks }: Props) {
   const periodResults = viewWeeks === 0 ? results : results.slice(-viewWeeks);
   const label = viewWeeks === 0 ? '전체' : `최근 ${viewWeeks}주`;
+  const actualWeeks = periodResults.length;
+  const isShortData = viewWeeks > 0 && actualWeeks < viewWeeks;
 
   const sum = (getter: (r: WeeklyResult) => number) =>
     periodResults.reduce((acc, r) => {
@@ -25,7 +27,14 @@ export default function SummaryCards({ results, keyword, viewWeeks }: Props) {
 
   return (
     <div>
-      <p className="period-badge">{label} 누적 언급량</p>
+      <div className="period-badge-row">
+        <p className="period-badge">{label} 누적 언급량</p>
+        {isShortData && (
+          <span className="data-shortage-notice">
+            현재 {actualWeeks}주치 데이터만 수집됨 ({viewWeeks}주 중 {actualWeeks}주)
+          </span>
+        )}
+      </div>
       <div className="summary-cards">
         {cards.map((c) => (
           <div key={c.label} className="card" style={{ borderTop: `4px solid ${c.color}` }}>
