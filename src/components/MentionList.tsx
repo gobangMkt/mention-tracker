@@ -62,12 +62,13 @@ function PlatformCard({
   total: number;
   items: MentionItem[];
 }) {
-  const [tab, setTab] = useState<'title' | 'all'>('title');
+  const [tab, setTab] = useState<'title' | 'body'>('title');
   const pct = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
 
   const hasTitleMatchInfo = items.some((item) => item.titleMatch !== undefined);
   const titleItems = items.filter((item) => item.titleMatch);
-  const visibleItems = (hasTitleMatchInfo && tab === 'title') ? titleItems : items;
+  const bodyItems = items.filter((item) => !item.titleMatch);
+  const visibleItems = (hasTitleMatchInfo && tab === 'body') ? bodyItems : titleItems;
 
   return (
     <div className="platform-card">
@@ -93,10 +94,10 @@ function PlatformCard({
                 제목 노출 <span className="item-tab-count">{titleItems.length}</span>
               </button>
               <button
-                className={`item-tab ${tab === 'all' ? 'active' : ''}`}
-                onClick={() => setTab('all')}
+                className={`item-tab ${tab === 'body' ? 'active' : ''}`}
+                onClick={() => setTab('body')}
               >
-                본문 포함 <span className="item-tab-count">{items.length}</span>
+                본문만 <span className="item-tab-count">{bodyItems.length}</span>
               </button>
             </div>
           )}
