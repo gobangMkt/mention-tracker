@@ -93,6 +93,18 @@ export default function App() {
         </aside>
 
         <div className="content">
+          {collecting && (
+            <div className="collecting-overlay">
+              <div className="collecting-box">
+                <div className="collecting-spinner" />
+                <p className="collecting-title">수집 중입니다…</p>
+                <p className="collecting-desc">
+                  키워드 {keywords.length}개를 검색하고 있습니다.<br />
+                  플랫폼별 언급량을 가져오는 중이니 잠시만 기다려주세요.
+                </p>
+              </div>
+            </div>
+          )}
           {selectedKeyword ? (
             <>
               <SummaryCards result={latestResult} keyword={selectedKeyword} />
