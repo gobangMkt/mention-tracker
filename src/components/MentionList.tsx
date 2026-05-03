@@ -110,10 +110,19 @@ function PlatformCard({
   );
 }
 
-function filterRecentItems(items: MentionItem[], cutoff: Date, keepUndated = false): MentionItem[] {
+function extractDateFromText(text: string): Date | null {
+  const dotMatch = text.match(/(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})/);
+  if (dotMatch) return new Date(+dotMatch[1], +dotMatch[2] - 1, +dotMatch[3]);
+  const koMatch = text.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
+  if (koMatch) return new Date(+koMatch[1], +koMatch[2] - 1, +koMatch[3]);
+  return null;
+}
+
+function filterRecentItems(items: MentionItem[], cutoff: Date, checkSnippet = false): MentionItem[] {
   return items.filter((item) => {
-    const d = parseItemDate(item.date);
-    if (d === null) return keepUndated;
+    const d = parseItemDate(item.date)
+      ?? (checkSnippet && item.snippet ? extractDateFromText(item.snippet) : null);
+    if (d === null) return true; // 날짜 파악 불가 → 유지
     return d >= cutoff;
   });
 }
