@@ -1,5 +1,5 @@
 import type { WeeklyResult } from '../types';
-import { weekToDateRange } from '../utils';
+import { collectedRangeSpan } from '../utils';
 
 interface Props {
   results: WeeklyResult[];
@@ -13,15 +13,9 @@ export default function SummaryCards({ results, keyword, viewWeeks }: Props) {
   const actualWeeks = periodResults.length;
   const isShortData = viewWeeks > 0 && actualWeeks < viewWeeks;
 
-  const dateRangeLabel = (() => {
-    if (!periodResults.length) return '';
-    const first = weekToDateRange(periodResults[0].week);
-    const last = weekToDateRange(periodResults[periodResults.length - 1].week);
-    if (first === last) return first;
-    const startDate = first.split('~')[0];
-    const endDate = last.split('~')[1];
-    return `${startDate}~${endDate}`;
-  })();
+  const dateRangeLabel = periodResults.length
+    ? collectedRangeSpan(periodResults[0].collectedAt, periodResults[periodResults.length - 1].collectedAt)
+    : '';
 
   const sum = (getter: (r: WeeklyResult) => number) =>
     periodResults.reduce((acc, r) => {

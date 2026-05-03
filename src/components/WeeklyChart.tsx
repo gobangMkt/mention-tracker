@@ -2,7 +2,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import type { WeeklyResult } from '../types';
-import { weekToDateRange } from '../utils';
+import { collectedAtToRange } from '../utils';
 
 interface Props {
   results: WeeklyResult[];
@@ -23,7 +23,7 @@ export default function WeeklyChart({ results, keyword, viewWeeks }: Props) {
   const chartData = periodResults.map((r) => {
     const kd = r.data.find((d) => d.keyword === keyword);
     return {
-      week: r.week,
+      collectedAt: r.collectedAt,
       '네이버 블로그': kd?.naver.blog.periodCount ?? 0,
       '네이버 뉴스': kd?.naver.news.periodCount ?? 0,
       '네이버 카페': kd?.naver.cafe.periodCount ?? 0,
@@ -40,9 +40,9 @@ export default function WeeklyChart({ results, keyword, viewWeeks }: Props) {
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-          <XAxis dataKey="week" tickFormatter={weekToDateRange} tick={{ fontSize: 11 }} />
+          <XAxis dataKey="collectedAt" tickFormatter={(v) => collectedAtToRange(v, false)} tick={{ fontSize: 11 }} />
           <YAxis tick={{ fontSize: 12 }} />
-          <Tooltip labelFormatter={(label) => weekToDateRange(String(label))} />
+          <Tooltip labelFormatter={(label) => collectedAtToRange(String(label))} />
           <Legend />
           {PLATFORMS.map(({ name, color }) => (
             <Line
