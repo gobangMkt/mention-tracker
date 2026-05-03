@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import type { WeeklyResult, MentionItem } from '../types';
+import { parseItemDate } from '../utils';
 
 interface Props {
   result: WeeklyResult | null;
@@ -108,12 +109,20 @@ function PlatformCard({
   );
 }
 
+function filterRecentItems(items: MentionItem[], cutoff: Date): MentionItem[] {
+  return items.filter((item) => {
+    const d = parseItemDate(item.date);
+    return d !== null && d >= cutoff;
+  });
+}
+
 export default function MentionList({ result, keyword }: Props) {
   if (!result) return <p className="empty">수집된 데이터가 없습니다.</p>;
   const kd = result.data.find((d) => d.keyword === keyword);
   if (!kd) return <p className="empty">해당 키워드 데이터 없음</p>;
 
   const periodLabel = new Date(result.collectedAt).toLocaleDateString('ko-KR');
+  const cutoff = new Date(new Date(result.collectedAt).getTime() - 7 * 24 * 60 * 60 * 1000);
 
   const counts = {
     blog: kd.naver.blog.periodCount ?? kd.naver.blog.items.length,
@@ -167,17 +176,17 @@ export default function MentionList({ result, keyword }: Props) {
         <PlatformCard
           label="네이버 블로그" color="#03C75A"
           count={counts.blog} total={grandTotal}
-          items={kd.naver.blog.items ?? []}
+          items={filterRecentItems(kd.naver.blog.items ?? [], cutoff)}
         />
         <PlatformCard
           label="네이버 뉴스" color="#1EC800"
           count={counts.news} total={grandTotal}
-          items={kd.naver.news.items ?? []}
+          items={filterRecentItems(kd.naver.news.items ?? [], cutoff)}
         />
         <PlatformCard
           label="네이버 카페" color="#00B4B4"
           count={counts.cafe} total={grandTotal}
-          items={kd.naver.cafe.items ?? []}
+          items={filterRecentItems(kd.naver.cafe.items ?? [], cutoff)}
         />
         <PlatformCard
           label="구글" color="#4285F4"
