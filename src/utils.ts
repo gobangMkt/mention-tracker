@@ -42,3 +42,16 @@ export function collectedRangeSpan(first: string, last: string): string {
   }
   return `${endYear}.${fmtMD(start)}~${fmtMD(end)}`;
 }
+
+// 조회 범위(viewWeeks) 기준 날짜 레이블: "YYYY.M/D~M/D"
+export function viewRangeLabel(collectedAt: string, viewWeeks: number): string {
+  const end = new Date(collectedAt);
+  const endYear = end.getFullYear();
+  if (viewWeeks === 0) return `${endYear}.${fmtMD(end)} 기준 전체`;
+  const start = new Date(end.getTime() - viewWeeks * 7 * 24 * 60 * 60 * 1000);
+  const startYear = start.getFullYear();
+  if (startYear !== endYear) {
+    return `${startYear}.${fmtMD(start)}~${endYear}.${fmtMD(end)}`;
+  }
+  return `${endYear}.${fmtMD(start)}~${fmtMD(end)}`;
+}

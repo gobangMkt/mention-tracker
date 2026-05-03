@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import type { WeeklyResult, MentionItem } from '../types';
-import { parseItemDate } from '../utils';
+import { parseItemDate, viewRangeLabel } from '../utils';
 
 interface Props {
   result: WeeklyResult | null;
   keyword: string;
+  viewWeeks: number;
 }
 
 const PLATFORMS = [
@@ -116,13 +117,14 @@ function filterRecentItems(items: MentionItem[], cutoff: Date): MentionItem[] {
   });
 }
 
-export default function MentionList({ result, keyword }: Props) {
+export default function MentionList({ result, keyword, viewWeeks }: Props) {
   if (!result) return <p className="empty">수집된 데이터가 없습니다.</p>;
   const kd = result.data.find((d) => d.keyword === keyword);
   if (!kd) return <p className="empty">해당 키워드 데이터 없음</p>;
 
-  const periodLabel = new Date(result.collectedAt).toLocaleDateString('ko-KR');
-  const cutoff = new Date(new Date(result.collectedAt).getTime() - 7 * 24 * 60 * 60 * 1000);
+  const periodLabel = viewRangeLabel(result.collectedAt, viewWeeks);
+  const weeks = viewWeeks === 0 ? 520 : viewWeeks; // 전체: 10년치 cutoff로 사실상 무제한
+  const cutoff = new Date(new Date(result.collectedAt).getTime() - weeks * 7 * 24 * 60 * 60 * 1000);
 
   const counts = {
     blog: kd.naver.blog.periodCount ?? kd.naver.blog.items.length,

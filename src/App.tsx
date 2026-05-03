@@ -111,7 +111,7 @@ export default function App() {
               {results.length > 0 && (
                 <WeeklyChart results={results} keyword={selectedKeyword} viewWeeks={viewWeeks} />
               )}
-              <MentionList result={latestResult} keyword={selectedKeyword} />
+              <MentionList result={latestResult} keyword={selectedKeyword} viewWeeks={viewWeeks} />
             </>
           ) : (
             <div className="empty-state">
