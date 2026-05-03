@@ -110,10 +110,11 @@ function PlatformCard({
   );
 }
 
-function filterRecentItems(items: MentionItem[], cutoff: Date): MentionItem[] {
+function filterRecentItems(items: MentionItem[], cutoff: Date, keepUndated = false): MentionItem[] {
   return items.filter((item) => {
     const d = parseItemDate(item.date);
-    return d !== null && d >= cutoff;
+    if (d === null) return keepUndated;
+    return d >= cutoff;
   });
 }
 
@@ -193,7 +194,7 @@ export default function MentionList({ result, keyword, viewWeeks }: Props) {
         <PlatformCard
           label="구글" color="#4285F4"
           count={counts.google} total={grandTotal}
-          items={kd.google.items ?? []}
+          items={filterRecentItems(kd.google.items ?? [], cutoff, true)}
         />
       </div>
     </div>

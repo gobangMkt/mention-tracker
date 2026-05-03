@@ -1,15 +1,19 @@
 const fmtMD = (d: Date) => `${d.getMonth() + 1}/${d.getDate()}`;
 
-// 네이버 날짜 문자열 파싱 (YYYYMMDD 또는 RFC2822/ISO)
+// 날짜 문자열 파싱 (YYYYMMDD / RFC2822 / "YYYY. M. D." / "YYYY년 M월 D일")
 export function parseItemDate(dateStr: string | undefined): Date | null {
   if (!dateStr) return null;
+  // 네이버 블로그: YYYYMMDD
   if (/^\d{8}$/.test(dateStr)) {
-    return new Date(
-      parseInt(dateStr.slice(0, 4)),
-      parseInt(dateStr.slice(4, 6)) - 1,
-      parseInt(dateStr.slice(6, 8))
-    );
+    return new Date(parseInt(dateStr.slice(0, 4)), parseInt(dateStr.slice(4, 6)) - 1, parseInt(dateStr.slice(6, 8)));
   }
+  // 구글(한국): "YYYY년 M월 D일"
+  const koMatch = dateStr.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
+  if (koMatch) return new Date(+koMatch[1], +koMatch[2] - 1, +koMatch[3]);
+  // 구글(한국): "YYYY. M. D."
+  const dotMatch = dateStr.match(/(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})/);
+  if (dotMatch) return new Date(+dotMatch[1], +dotMatch[2] - 1, +dotMatch[3]);
+  // RFC2822 / ISO (네이버 뉴스·카페)
   const d = new Date(dateStr);
   return isNaN(d.getTime()) ? null : d;
 }
