@@ -2,6 +2,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import type { WeeklyResult } from '../types';
+import { weekToDateRange } from '../utils';
 
 interface Props {
   results: WeeklyResult[];
@@ -39,9 +40,9 @@ export default function WeeklyChart({ results, keyword, viewWeeks }: Props) {
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-          <XAxis dataKey="week" tick={{ fontSize: 12 }} />
+          <XAxis dataKey="week" tickFormatter={weekToDateRange} tick={{ fontSize: 11 }} />
           <YAxis tick={{ fontSize: 12 }} />
-          <Tooltip />
+          <Tooltip labelFormatter={(label) => weekToDateRange(String(label))} />
           <Legend />
           {PLATFORMS.map(({ name, color }) => (
             <Line

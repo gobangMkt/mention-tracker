@@ -1,4 +1,5 @@
 import type { WeeklyResult } from '../types';
+import { weekToDateRange } from '../utils';
 
 interface Props {
   results: WeeklyResult[];
@@ -11,6 +12,16 @@ export default function SummaryCards({ results, keyword, viewWeeks }: Props) {
   const label = viewWeeks === 0 ? '전체' : `최근 ${viewWeeks}주`;
   const actualWeeks = periodResults.length;
   const isShortData = viewWeeks > 0 && actualWeeks < viewWeeks;
+
+  const dateRangeLabel = (() => {
+    if (!periodResults.length) return '';
+    const first = weekToDateRange(periodResults[0].week);
+    const last = weekToDateRange(periodResults[periodResults.length - 1].week);
+    if (first === last) return first;
+    const startDate = first.split('~')[0];
+    const endDate = last.split('~')[1];
+    return `${startDate}~${endDate}`;
+  })();
 
   const sum = (getter: (r: WeeklyResult) => number) =>
     periodResults.reduce((acc, r) => {
@@ -28,7 +39,10 @@ export default function SummaryCards({ results, keyword, viewWeeks }: Props) {
   return (
     <div>
       <div className="period-badge-row">
-        <p className="period-badge">{label} 누적 언급량</p>
+        <p className="period-badge">
+          {label} 누적 언급량
+          {dateRangeLabel && <span className="period-dates">{dateRangeLabel}</span>}
+        </p>
         {isShortData && (
           <span className="data-shortage-notice">
             현재 {actualWeeks}주치 데이터만 수집됨 ({viewWeeks}주 중 {actualWeeks}주)
